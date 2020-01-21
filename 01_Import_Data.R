@@ -28,6 +28,10 @@ train <- train[, -..dropcols]
 # Type of each column
 sapply(train, class)
 
+# Transformations ---------------------------------------------------------
+
+# Transformations need to be repeated for test set for accurate scoring
+
 # Convert region_code and district_code to character
 train[["region_code"]] <- as.character(train[["region_code"]])
 train[["district_code"]] <- as.character(train[["district_code"]])
