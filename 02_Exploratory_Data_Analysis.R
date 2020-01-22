@@ -42,5 +42,6 @@ points(train[status_group == "non functional"]$longitude,
        train[status_group == "non functional"]$latitude,
        col = rgb(1, 0, 0, 0.1), cex = .6, pch = 23)
 
+### Remember to Zoom before viewing plot
 ### Conclusion - Pumps located in a longtidunal band across the centre are
-### functional as compared to the borders.
+### functional as compared to the borders?
