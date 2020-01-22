@@ -24,6 +24,6 @@ view(dfSummary(train))
 target_vals <- names(table(train$status_group))
 sapply(target_vals, function(z) {
   view(dfSummary(train[train$status_group == z,]))
-  })
+})
 
 ### Quick view - nothing stands out.
