@@ -28,12 +28,12 @@ sapply(target_vals, function(z) {
 
 ### Quick view - nothing stands out
 
+# Plot the functional and non functional pumps with a different color on a
+# map using the rworldmap package
 library(rworldmap)
 newmap <- getMap(resolution = "high")
-
 rnglong <- range(train$longitude)
 rnglat <- range(train$latitude)
-
 plot(newmap, xlim = rnglong, ylim = rnglat, asp = 1)
 points(train[status_group == "functional"]$longitude,
        train[status_group == "functional"]$latitude,
@@ -41,3 +41,6 @@ points(train[status_group == "functional"]$longitude,
 points(train[status_group == "non functional"]$longitude,
        train[status_group == "non functional"]$latitude,
        col = rgb(1, 0, 0, 0.1), cex = .6, pch = 23)
+
+### Conclusion - Pumps located in a longtidunal band across the centre are
+### functional as compared to the borders.
