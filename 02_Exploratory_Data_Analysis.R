@@ -18,3 +18,12 @@ view(dfSummary(train))
 
 # The only variables with missing values are public_meeting and
 # permit, the two boolean variables
+
+### Running the summary by the different classes of the Target to see if any significant distributional differences pop up
+
+target_vals <- names(table(train$status_group))
+sapply(target_vals, function(z) {
+  view(dfSummary(train[train$status_group == z,]))
+  })
+
+### Quick view - nothing stands out.
