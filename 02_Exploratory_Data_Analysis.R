@@ -29,6 +29,8 @@ view(dfSummary(train))
 ### Quick view - nothing stands out
 ### Commented out the previous block on 1/25
 
+# Latitude & Longitude ----------------------------------------------------
+
 # Plot the functional and non functional pumps with a different color on a
 # map using the rworldmap package
 library(rworldmap)
@@ -73,7 +75,10 @@ points(train[status_group == "non functional"]$longitude,
        train[status_group == "non functional"]$latitude,
        col = rgb(1, 0, 0, 0.1), cex = .6, pch = 23)
 
+# amount_tsh --------------------------------------------------------------
+
 # amount_tsh - Total static head (amount water available to waterpoint)
+
 summary(train$amount_tsh)
 aggregate(train$amount_tsh, list(train$status_group),
           function(x) sum(x == 0) / length(x))
@@ -164,3 +169,37 @@ median.test(train_temp[status_group == 'functional needs repair']$amount_tsh,
 ### continues to hold even after removing all 0 values
 ### 4) Interestingly, after removing 0's, the median value for needs repair is
 ### is the highest even though the mean is lower than functional
+
+# funder ------------------------------------------------------------------
+
+### Around ~1900 distinct values
+
+# Convert all values to lower case and trim
+funder <- trimws(tolower(train$funder))
+
+# Remove all non alphanumeric characters
+funder <- gsub("[^[:alnum:]]", "", funder)
+
+# Find possible duplicates using distance functions
+funder_uniq <- unique(funder)
+funder_uniq <- sort(funder_uniq)
+length(funder_uniq)
+dist_mat <- adist(funder_uniq, funder_uniq)
+funder_closest_idx <- apply(dist_mat, 1, function(x) {
+  m <- min(x[x > 0])
+  which(x == m)[1]
+})
+funder_closest <- data.table(
+  funder_uniq,
+  funder_closest = funder_uniq[funder_closest_idx]
+)
+funder_cnts <- unclass(table(funder))
+funder_counts <- data.table(
+  funder_uniq = names(funder_cnts),
+  funder_counts = funder_cnts
+)
+funder_closest <- merge(funder_closest, funder_counts,
+                        by = "funder_uniq", all = TRUE)
+funder_closest$funder_counts_pct <-
+  funder_closest$funder_counts / sum(funder_closest$funder_counts)
+fwrite(funder_closest, "02_Exploratory_Outputs/funder_impute.csv")
