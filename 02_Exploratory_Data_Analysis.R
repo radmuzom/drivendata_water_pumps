@@ -47,18 +47,17 @@ points(train[status_group == "non functional"]$longitude,
 ### Conclusion - Pumps located in a longtidunal band across the centre are
 ### functional as compared to the borders?
 
-### Explore what's going on with 0s on Lat and Long
-
+# Explore what's going on with 0s on Lat and Long
 quantile(train$longitude, p = seq(0,1,0.02))
 quantile(train$latitude, p = seq(0,1,0.02))
 nrow(train[train$longitude == 0 & train$latitude > -1.2,])
 prop.table(table(train$status_group[train$longitude == 0 & train$latitude > -1.2], useNA = "ifany"))
 
-# 1812 Rows
-# functional - 48.0%, functional needs repair - 21.3%, non functional - 30.7%
-# Higher proportion of FNRs in the incorrect longitude
+### 1812 Rows
+### functional - 48.0%, functional needs repair - 21.3%, non functional - 30.7%
+### Higher proportion of FNRs in the incorrect longitude
 
-### Rerunning map eliminating the 0 longitudes
+# Rerunning map eliminating the 0 longitudes
 train <- subset(train, longitude > 0)
 newmap <- getMap(resolution = "high")
 rnglong <- range(train$longitude)
