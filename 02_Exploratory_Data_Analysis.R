@@ -220,3 +220,62 @@ chisq.test(factor(train$funder_imputed), factor(train$status_group),
 ### Key conclusions
 ### 1) The imputation and chi-squared test suggests that definitely funder is
 ### related to the status_group
+
+# gps_height --------------------------------------------------------------
+
+summary(train$gps_height)
+aggregate(train$gps_height, list(train$status_group),
+          function(x) sum(x <= 0) / length(x))
+aggregate(train$gps_height, list(train$status_group), mean)
+aggregate(train$amount_tsh, list(train$status_group), var)
+
+t.test(train[status_group == 'functional']$gps_height,
+       train[status_group == 'functional needs repair']$gps_height,
+       alternative = "greater", var.equal = FALSE)
+t.test(train[status_group == 'functional']$gps_height,
+       train[status_group == 'non functional']$gps_height,
+       alternative = "greater", var.equal = FALSE)
+t.test(train[status_group == 'functional needs repair']$gps_height,
+       train[status_group == 'non functional']$gps_height,
+       alternative = "greater", var.equal = FALSE)
+
+train_temp <- train[gps_height > 0, c("gps_height", "status_group")]
+summary(train_temp$gps_height)
+aggregate(train_temp$gps_height, list(train_temp$status_group), mean)
+aggregate(train_temp$gps_height, list(train_temp$status_group), var)
+aggregate(train_temp$gps_height, list(train_temp$status_group), median)
+
+t.test(train_temp[status_group == 'functional']$gps_height,
+       train_temp[status_group == 'functional needs repair']$gps_height,
+       alternative = "greater", var.equal = FALSE)
+t.test(train_temp[status_group == 'functional']$gps_height,
+       train_temp[status_group == 'non functional']$gps_height,
+       alternative = "greater", var.equal = FALSE)
+t.test(train_temp[status_group == 'functional needs repair']$gps_height,
+       train_temp[status_group == 'non functional']$gps_height,
+       alternative = "greater", var.equal = FALSE)
+
+ggplot(data = train,
+       aes(x = status_group, y = gps_height)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  labs(x = NULL, y = NULL,
+       title = "GPS height by status group") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
+
+### Key conclusions
+### 1) gps_height definititely shows a relationship with status_group
+### 2) Around 35-40% of the values of this variable is <=0, even though the % of
+### such values is higher for the needs repair and non functional
+### group
+### 3) T-test shows that the difference in means is significant, which
+### continues to hold even after removing all 0 values
