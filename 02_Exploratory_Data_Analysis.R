@@ -203,3 +203,20 @@ funder_closest <- merge(funder_closest, funder_counts,
 funder_closest$funder_counts_pct <-
   funder_closest$funder_counts / sum(funder_closest$funder_counts)
 fwrite(funder_closest, "02_Exploratory_Outputs/funder_impute.csv")
+
+# Load the data back after funder imputation and merge back with training data
+funder_imputed <- fread("02_Exploratory_Outputs/funder_imputed.csv")
+funder_imputed <- funder_imputed[, c("funder_uniq", "funder_imputed")]
+table(funder_imputed$funder_imputed, useNA = "ifany")
+train[["funder_uniq"]] <- trimws(tolower(train$funder))
+train$funder_uniq <- gsub("[^[:alnum:]]", "", train$funder_uniq)
+train <- merge(train, funder_imputed, by = "funder_uniq", all = TRUE)
+
+# Chi-squared test
+chisq.test(factor(train$funder_imputed), factor(train$status_group)) #warning
+chisq.test(factor(train$funder_imputed), factor(train$status_group),
+           simulate.p.value = TRUE, B = 100000)
+
+### Key conclusions
+### 1) The imputation and chi-squared test suggests that definitely funder is
+### related to the status_group
