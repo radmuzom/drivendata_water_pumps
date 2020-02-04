@@ -63,16 +63,16 @@ prop.table(table(
 ### Higher proportion of FNRs in the incorrect longitude
 
 # Rerunning map eliminating the 0 longitudes
-train <- subset(train, longitude > 0)
+train_temp <- subset(train, longitude > 0)
 newmap <- getMap(resolution = "high")
-rnglong <- range(train$longitude)
-rnglat <- range(train$latitude)
+rnglong <- range(train_temp$longitude)
+rnglat <- range(train_temp$latitude)
 plot(newmap, xlim = rnglong, ylim = rnglat, asp = 1)
-points(train[status_group == "functional"]$longitude,
-       train[status_group == "functional"]$latitude,
+points(train_temp[status_group == "functional"]$longitude,
+       train_temp[status_group == "functional"]$latitude,
        col = rgb(0, 1, 0, 0.1), cex = .6, pch = 21)
-points(train[status_group == "non functional"]$longitude,
-       train[status_group == "non functional"]$latitude,
+points(train_temp[status_group == "non functional"]$longitude,
+       train_temp[status_group == "non functional"]$latitude,
        col = rgb(1, 0, 0, 0.1), cex = .6, pch = 23)
 
 # amount_tsh --------------------------------------------------------------
