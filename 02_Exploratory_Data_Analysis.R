@@ -75,6 +75,31 @@ points(train_temp[status_group == "non functional"]$longitude,
        train_temp[status_group == "non functional"]$latitude,
        col = rgb(1, 0, 0, 0.1), cex = .6, pch = 23)
 
+### dodoma -6.1630 35.7516
+### mwanza -2.5164 32.9175
+library(sf)
+train_sf <- st_as_sf(train[, c("latitude", "longitude")],
+                     coords = c("longitude", "latitude"))
+dodoma_dist <- st_distance(
+  train_sf,
+  st_as_sf(
+    data.frame(lat = -6.1630, long = 35.7516),
+    coords = c("long", "lat")
+  )
+)
+mwanza_dist <- st_distance(
+  train_sf,
+  st_as_sf(
+    data.frame(lat = -2.5164, long = 32.9175),
+    coords = c("long", "lat")
+  )
+)
+train[["distance_dodoma"]] <- as.vector(dodoma_dist)
+train[["distance_mwanza"]] <- as.vector(mwanza_dist)
+
+train[longitude == 0, "distance_dodoma"] <- NA
+train[longitude == 0, "distance_mwanza"] <- NA
+
 # amount_tsh --------------------------------------------------------------
 
 # amount_tsh - Total static head (amount water available to waterpoint)
