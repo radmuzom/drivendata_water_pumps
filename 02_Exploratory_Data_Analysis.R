@@ -246,6 +246,46 @@ chisq.test(factor(train$funder_imputed), factor(train$status_group),
 ### 1) The imputation and chi-squared test suggests that definitely funder is
 ### related to the status_group
 
+### Arvind additional checks on funder 5th Feb
+
+plyr::count(train$funder_imputed)
+
+ggplot(data = train,
+       aes(x = funder_imputed, y = gps_height)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  labs(x = NULL, y = NULL,
+       title = "GPS height by funder") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
+
+ggplot(data = train,
+       aes(x = funder_imputed, y = as.numeric(status_group == "non functional"))) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  labs(x = NULL, y = NULL,
+       title = "Funder imputed by non-functional rate") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10, angle = 45),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
+
+
+
 # gps_height --------------------------------------------------------------
 
 summary(train$gps_height)
@@ -296,6 +336,15 @@ ggplot(data = train,
     plot.title = element_text(hjust = 0.5, vjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
   )
+
+### Added by Arvind on 5th Feb
+
+quantile(train$gps_height, p = seq(0,1,0.02))
+target_vals <- names(table(train$status_group))
+gps_height_distr <- as.data.frame(sapply(target_vals, function(z) {
+  quantile(train$gps_height[train$status_group == z], p = seq(0,1,0.02))
+}))
+write.csv(gps_height_distr,file = "gps_height_distr.csv", row.names = TRUE)
 
 ### Key conclusions
 ### 1) gps_height definititely shows a relationship with status_group
