@@ -99,6 +99,66 @@ train[["distance_mwanza"]] <- as.vector(mwanza_dist)
 
 train[longitude == 0, "distance_dodoma"] <- NA
 train[longitude == 0, "distance_mwanza"] <- NA
+train[["min_distance_dodmwa"]] <- pmin(train$distance_dodoma,
+                                       train$distance_mwanza)
+
+summary(train$distance_dodoma)
+summary(train$distance_mwanza)
+summary(train$min_distance_dodmwa)
+
+aggregate(train$distance_dodoma, list(train$status_group), mean, na.rm = TRUE)
+aggregate(train$distance_mwanza, list(train$status_group), mean, na.rm = TRUE)
+aggregate(train$min_distance_dodmwa, list(train$status_group), mean,
+          na.rm = TRUE)
+
+ggplot(data = train[!is.na(distance_dodoma)],
+       aes(x = status_group, y = distance_dodoma)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  labs(x = NULL, y = NULL,
+       title = "Distance from Dodoma") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
+ggplot(data = train[!is.na(distance_mwanza)],
+       aes(x = status_group, y = distance_mwanza)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  labs(x = NULL, y = NULL,
+       title = "Distance from Mwanza") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
+ggplot(data = train[!is.na(min_distance_dodmwa)],
+       aes(x = status_group, y = min_distance_dodmwa)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  labs(x = NULL, y = NULL,
+       title = "Minimum Distance from either Dodoma or Mwanza") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
 
 # amount_tsh --------------------------------------------------------------
 
