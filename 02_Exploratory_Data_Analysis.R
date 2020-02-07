@@ -409,3 +409,24 @@ write.csv(gps_height_distr,file = "gps_height_distr.csv", row.names = TRUE)
 ### group
 ### 3) T-test shows that the difference in means is significant, which
 ### continues to hold even after removing all 0 values
+
+
+# basin -------------------------------------------------------------------
+
+# Number of unique basins
+length(unique(train$basin))
+
+### There are 9 of them
+
+# Frequency of unique values
+table(train$basin, useNA = "ifany")
+
+### Highest frequencies are lake victoria and pangani
+### There is a value called 'internal'. What does it mean?
+
+# Distribution of status by basin
+prop.table(table(train$basin, train$status_group, useNA = "ifany"), margin = 1)
+
+### lake rukwa and ruvuma / southern coast definitely stand out as less than
+### half of the pumps are functional there. lake tanganyika / lake victoria
+### are borderline.
