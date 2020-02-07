@@ -246,8 +246,7 @@ chisq.test(factor(train$funder_imputed), factor(train$status_group),
 ### 1) The imputation and chi-squared test suggests that definitely funder is
 ### related to the status_group
 
-### Arvind additional checks on funder 5th Feb
-
+# Arvind additional checks on funder 5th Feb
 plyr::count(train$funder_imputed)
 
 ggplot(data = train,
@@ -283,8 +282,6 @@ ggplot(data = train,
     plot.title = element_text(hjust = 0.5, vjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
   )
-
-
 
 # gps_height --------------------------------------------------------------
 
@@ -337,8 +334,7 @@ ggplot(data = train,
     plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
   )
 
-### Added by Arvind on 5th Feb
-
+# Added by Arvind on 5th Feb
 quantile(train$gps_height, p = seq(0,1,0.02))
 target_vals <- names(table(train$status_group))
 gps_height_distr <- as.data.frame(sapply(target_vals, function(z) {
