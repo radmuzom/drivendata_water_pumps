@@ -430,3 +430,31 @@ prop.table(table(train$basin, train$status_group, useNA = "ifany"), margin = 1)
 ### lake rukwa and ruvuma / southern coast definitely stand out as less than
 ### half of the pumps are functional there. lake tanganyika / lake victoria
 ### are borderline.
+
+# region  -------------------------------------------------------------------
+
+# Number of unique regions
+length(unique(train$region))
+
+### There are 21 of them
+
+dplyr::arrange(plyr::count(train$region), desc(freq))
+
+### Adequate counts in all of them
+
+# Distribution of status by region
+prop.table(table(train$region, train$status_group, useNA = "ifany"), margin = 1)
+
+### Clear separation by region. lindi has less than 30% functional
+### whereas iringa has almost 80% functional
+
+
+# subvillage -------------------------------------------------------------------
+
+# Number of unique basins
+length(unique(train$subvillage))
+
+### There are 19288 of them; need to figure out a way to group down
+
+# Frequency of unique values
+all_subvillages <- plyr::count(train$subvillage)
