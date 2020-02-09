@@ -410,7 +410,6 @@ write.csv(gps_height_distr,file = "gps_height_distr.csv", row.names = TRUE)
 ### 3) T-test shows that the difference in means is significant, which
 ### continues to hold even after removing all 0 values
 
-
 # basin -------------------------------------------------------------------
 
 # Number of unique basins
@@ -451,8 +450,7 @@ prop.table(table(train$region, train$status_group, useNA = "ifany"), margin = 1)
 ### Clear separation by region. lindi has less than 30% functional
 ### whereas iringa has almost 80% functional
 
-
-# subvillage -------------------------------------------------------------------
+# subvillage ----------------------------------------------------------------
 
 # Number of unique basins
 length(unique(train$subvillage))
@@ -461,3 +459,4 @@ length(unique(train$subvillage))
 
 # Frequency of unique values
 all_subvillages <- plyr::count(train$subvillage)
+
