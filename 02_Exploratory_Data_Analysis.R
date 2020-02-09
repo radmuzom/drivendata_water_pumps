@@ -439,8 +439,11 @@ length(unique(train$region))
 ### There are 21 of them
 
 dplyr::arrange(plyr::count(train$region), desc(freq))
+reg <- train[, .N, keyby = c("region", "region_code")]
 
-### Adequate counts in all of them
+### Adequate counts in all of them.
+### Same regions seem to have different codes in few cases. Assuming region is
+### right and the region_code can be ignored.
 
 # Distribution of status by region
 prop.table(table(train$region, train$status_group, useNA = "ifany"), margin = 1)
