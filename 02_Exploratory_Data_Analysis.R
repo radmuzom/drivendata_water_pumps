@@ -343,6 +343,59 @@ ggplot(data = train,
     plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
   )
 
+# installer ---------------------------------------------------------------
+
+length(unique(train$installer))
+
+### 1,936 unique values.
+
+# Convert all values to lower case and trim
+installer <- trimws(tolower(train$installer))
+
+# Remove all non alphanumeric characters
+installer <- gsub("[^[:alnum:]]", "", installer)
+
+# Find possible duplicates using distance functions
+installer_uniq <- unique(installer)
+installer_uniq <- sort(installer_uniq)
+length(installer_uniq)
+dist_mat <- adist(installer_uniq, installer_uniq)
+installer_closest_idx <- apply(dist_mat, 1, function(x) {
+  m <- min(x[x > 0])
+  which(x == m)[1]
+})
+installer_closest <- data.table(
+  installer_uniq,
+  installer_closest = installer_uniq[installer_closest_idx]
+)
+installer_cnts <- unclass(table(installer))
+installer_counts <- data.table(
+  installer_uniq = names(installer_cnts),
+  installer_counts = installer_cnts
+)
+installer_closest <- merge(installer_closest, installer_counts,
+                        by = "installer_uniq", all = TRUE)
+installer_closest$installer_counts_pct <-
+  installer_closest$installer_counts / sum(installer_closest$installer_counts)
+fwrite(installer_closest, "02_Exploratory_Outputs/installer_impute.csv")
+
+# Load the data back after installer imputation and merge back with training data
+installer_imputed <- fread("02_Exploratory_Outputs/installer_imputed.csv")
+installer_imputed <- installer_imputed[, c("installer_uniq", "installer_imputed")]
+table(installer_imputed$installer_imputed, useNA = "ifany")
+train[["installer_uniq"]] <- trimws(tolower(train$installer))
+train$installer_uniq <- gsub("[^[:alnum:]]", "", train$installer_uniq)
+train <- merge(train, installer_imputed, by = "installer_uniq", all = TRUE)
+
+# Chi-squared test
+chisq.test(factor(train$installer_imputed), factor(train$status_group)) #warning
+chisq.test(factor(train$installer_imputed), factor(train$status_group),
+           simulate.p.value = TRUE, B = 100000)
+
+### Key conclusions
+### 1) The imputation and chi-squared test suggests that definitely installer is
+### related to the status_group
+
 # gps_height --------------------------------------------------------------
 
 summary(train$gps_height)
