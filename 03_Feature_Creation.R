@@ -5,6 +5,8 @@ library(sf)
 
 # Load the train and test data
 train_values <- fread("train_values.csv")
+train_labels <- fread("train_labels.csv")
+train_values <- merge(train_values, train_labels, by = "id")
 test_values <- fread("test_values.csv")
 
 # Remove columns which cannot be used as features
