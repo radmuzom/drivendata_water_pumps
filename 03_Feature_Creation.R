@@ -77,6 +77,41 @@ train_values[["gps_height_0_flag"]] <- ifelse(train_values$gps_height == 0,
 test_values[["gps_height_0_flag"]] <- ifelse(test_values$gps_height == 0,
                                              0, 1)
 
+# installer
+installer_imputed <- fread("02_Exploratory_Outputs/installer_imputed.csv")
+installer_imputed <- installer_imputed[, c("installer_uniq", "installer_imputed")]
+table(installer_imputed$installer_imputed, useNA = "ifany")
+
+train_values[["installer_uniq"]] <- trimws(tolower(train_values$installer))
+train_values$installer_uniq <- gsub("[^[:alnum:]]", "", train_values$installer_uniq)
+train_values <- merge(train_values, installer_imputed,
+                      by = "installer_uniq", all = TRUE)
+train_values <- train_values[, -c("installer", "installer_uniq")]
+
+test_values[["installer_uniq"]] <- trimws(tolower(test_values$installer))
+test_values$installer_uniq <- gsub("[^[:alnum:]]", "", test_values$installer_uniq)
+test_values[is.na(installer_uniq), "installer_uniq"] <- ""
+test_values <- merge(test_values, installer_imputed,
+                     by = "installer_uniq", all = TRUE)
+test_values <- test_values[, -c("installer", "installer_uniq")]
+sum(is.na(test_values$installer_imputed))
+
+### 225 missing values. But should not matter due to encoding.
+
+dtz <- designTreatmentsZ(train_values, "installer_imputed")
+train_dtz <- prepare(dtz, train_values)
+train_dtz <- train_dtz[, -1]
+test_dtz <- prepare(dtz, test_values)
+test_dtz <- test_dtz[, -1]
+
+train_values <- cbind(train_values, train_dtz)
+train_values <- train_values[, -"installer_imputed"]
+
+test_values <- cbind(test_values, test_dtz)
+test_values <- test_values[, -"installer_imputed"]
+
+rm(dtz)
+
 # latitude / longitude
 
 train_sf <- st_as_sf(train_values[, c("latitude", "longitude")],
