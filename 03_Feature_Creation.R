@@ -41,13 +41,14 @@ table(funder_imputed$funder_imputed, useNA = "ifany")
 train_values[["funder_uniq"]] <- trimws(tolower(train_values$funder))
 train_values$funder_uniq <- gsub("[^[:alnum:]]", "", train_values$funder_uniq)
 train_values <- merge(train_values, funder_imputed,
-                      by = "funder_uniq", all = TRUE)
+                      by = "funder_uniq", all.x = TRUE)
 train_values <- train_values[, -c("funder", "funder_uniq")]
 
 test_values[["funder_uniq"]] <- trimws(tolower(test_values$funder))
 test_values$funder_uniq <- gsub("[^[:alnum:]]", "", test_values$funder_uniq)
+test_values[is.na(funder_uniq), "funder_uniq"] <- ""
 test_values <- merge(test_values, funder_imputed,
-                      by = "funder_uniq", all = TRUE)
+                      by = "funder_uniq", all.x = TRUE)
 test_values <- test_values[, -c("funder", "funder_uniq")]
 sum(is.na(test_values$funder_imputed))
 
@@ -85,14 +86,14 @@ table(installer_imputed$installer_imputed, useNA = "ifany")
 train_values[["installer_uniq"]] <- trimws(tolower(train_values$installer))
 train_values$installer_uniq <- gsub("[^[:alnum:]]", "", train_values$installer_uniq)
 train_values <- merge(train_values, installer_imputed,
-                      by = "installer_uniq", all = TRUE)
+                      by = "installer_uniq", all.x = TRUE)
 train_values <- train_values[, -c("installer", "installer_uniq")]
 
 test_values[["installer_uniq"]] <- trimws(tolower(test_values$installer))
 test_values$installer_uniq <- gsub("[^[:alnum:]]", "", test_values$installer_uniq)
 test_values[is.na(installer_uniq), "installer_uniq"] <- ""
 test_values <- merge(test_values, installer_imputed,
-                     by = "installer_uniq", all = TRUE)
+                     by = "installer_uniq", all.x = TRUE)
 test_values <- test_values[, -c("installer", "installer_uniq")]
 sum(is.na(test_values$installer_imputed))
 
