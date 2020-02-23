@@ -73,7 +73,7 @@ rm(dtz)
 # gps_height
 train_values[["gps_height_neg_flag"]] <- ifelse(train_values$gps_height < 0,
                                                 0, 1)
-test_values[["amount_tsh_neg_flag"]] <- ifelse(test_values$gps_height > 0,
+test_values[["gps_height_neg_flag"]] <- ifelse(test_values$gps_height > 0,
                                                0, 1)
 train_values[["gps_height_0_flag"]] <- ifelse(train_values$gps_height == 0,
                                               0, 1)
