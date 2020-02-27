@@ -1,7 +1,8 @@
 library(xgboost)
 library(rBayesianOptimization)
 
-train <- train_values[, c(1, 2, 33:70)]
+train <- train_values[, c(1, 2, 33:100)]
+set.seed(412)
 train[["Random"]] <- runif(nrow(train))
 
 train_train <- train[Random < 0.7, ]
@@ -9,15 +10,17 @@ train_test <- train[Random >= 0.7, ]
 
 train_train_label <- as.numeric(factor(train_train$status_group)) - 1
 train_test_label <- as.numeric(factor(train_test$status_group)) - 1
-train_train <- train_train[, -c(3, 41)]
-train_test <- train_test[, -c(3, 41)]
+train_train[["Random"]] <- NULL
+train_test[["Random"]] <- NULL
+train_train[["status_group"]] <- NULL
+train_test[["status_group"]] <- NULL
 
 train_train_mat <- xgb.DMatrix(data = as.matrix(train_train),
                                label = train_train_label)
 train_test_mat <- xgb.DMatrix(data = as.matrix(train_test),
                               label = train_test_label)
 
-cv_folds <- KFold(train_train_label, nfolds = 5, stratified = TRUE, seed = 0)
+cv_folds <- KFold(train_train_label, nfolds = 4, stratified = TRUE, seed = 0)
 xgb_cv_bayes <- function(eta, gamma, max_depth,
                          min_child_weight, subsample, nrounds) {
   param_list <- list(
@@ -65,7 +68,7 @@ opt_res <- BayesianOptimization(
     nrounds = c(50L, 1000L)
   ),
   init_grid_dt = NULL,
-  init_points = 10,
+  init_points = 20,
   n_iter = 100,
   acq = "ucb",
   kappa = 2.576,
@@ -90,24 +93,26 @@ param_list <- list(
   "subsample" = 0.9
 )
 bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 300)
-test_pred <- predict(bst, newdata = train_test_mat)
-test_pred <- matrix(test_pred, nrow = 3, ncol = length(test_pred) / 3)
-test_pred <- data.frame(t(test_pred))
-test_pred[["max_prob"]] <- max.col(test_pred, "last")
-test_pred[["label"]] <- train_test_label + 1
+train_test_pred <- predict(bst, newdata = train_test_mat)
+train_test_pred <- matrix(train_test_pred, nrow = 3,
+                          ncol = length(train_test_pred) / 3)
+train_test_pred <- data.frame(t(train_test_pred))
+train_test_pred[["max_prob"]] <- max.col(train_test_pred, "last")
+train_test_pred[["label"]] <- train_test_label + 1
 
-caret::confusionMatrix(factor(test_pred$max_prob),
-                       factor(test_pred$label),
+caret::confusionMatrix(factor(train_test_pred$max_prob),
+                       factor(train_test_pred$label),
                        mode = "everything")
 
-train_pred <- predict(bst, newdata = train_train_mat)
-train_pred <- matrix(train_pred, nrow = 3, ncol = length(train_pred) / 3)
-train_pred <- data.frame(t(train_pred))
-train_pred[["max_prob"]] <- max.col(train_pred, "last")
-train_pred[["label"]] <- train_train_label + 1
+train_train_pred <- predict(bst, newdata = train_train_mat)
+train_train_pred <- matrix(train_train_pred, nrow = 3,
+                           ncol = length(train_train_pred) / 3)
+train_train_pred <- data.frame(t(train_train_pred))
+train_train_pred[["max_prob"]] <- max.col(train_train_pred, "last")
+train_train_pred[["label"]] <- train_train_label + 1
 
-caret::confusionMatrix(factor(train_pred$max_prob),
-                       factor(train_pred$label),
+caret::confusionMatrix(factor(train_train_pred$max_prob),
+                       factor(train_train_pred$label),
                        mode = "everything")
 
 xgb.ggplot.importance(xgb.importance(model = bst))
