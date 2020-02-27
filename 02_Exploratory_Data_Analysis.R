@@ -505,7 +505,7 @@ prop.table(table(train$region, train$status_group, useNA = "ifany"), margin = 1)
 
 # subvillage ----------------------------------------------------------------
 
-# Number of unique basins
+# Number of unique subvillages
 length(unique(train$subvillage))
 
 ### There are 19288 of them; need to figure out a way to group down
@@ -513,3 +513,16 @@ length(unique(train$subvillage))
 # Frequency of unique values
 all_subvillages <- plyr::count(train$subvillage)
 
+# district_code -----------------------------------------------------------
+
+# Number of unique districts
+length(unique(train$district_code))
+
+### 20 unique values
+
+regdist <- train[, .N, keyby = c("region", "district_code")]
+
+### Same district code appears for many different regions
+
+prop.table(table(train$district_code, train$status_group, useNA = "ifany"),
+           margin = 1)
