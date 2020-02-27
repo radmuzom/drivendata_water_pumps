@@ -179,3 +179,16 @@ test_values[["min_distance_dodmwa"]] <- pmin(test_values$distance_dodoma,
                                               test_values$distance_mwanza)
 test_values[["max_distance_dodmwa"]] <- pmax(test_values$distance_dodoma,
                                               test_values$distance_mwanza)
+
+# basin
+
+dtz <- designTreatmentsZ(train_values, "basin")
+train_dtz <- prepare(dtz, train_values)
+train_dtz <- train_dtz[, -1]
+test_dtz <- prepare(dtz, test_values)
+test_dtz <- test_dtz[, -1]
+
+train_values <- cbind(train_values, train_dtz)
+test_values <- cbind(test_values, test_dtz)
+
+rm(dtz)
