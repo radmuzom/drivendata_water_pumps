@@ -552,4 +552,12 @@ prop.table(table(train$lga, train$status_group, useNA = "ifany"),
 # ward --------------------------------------------------------------------
 
 # Number of unique ward
-length(unique(train$lga))
+length(unique(train$ward))
+
+### 2092 unique values
+
+# Look at values
+table(train$ward)
+
+# Frequency of unique values
+all_wards <- plyr::count(train$ward)
