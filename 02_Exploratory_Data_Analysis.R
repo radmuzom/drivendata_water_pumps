@@ -561,3 +561,60 @@ table(train$ward)
 
 # Frequency of unique values
 all_wards <- plyr::count(train$ward)
+
+# population --------------------------------------------------------------
+
+summary(train$population)
+aggregate(train$population, list(train$status_group),
+          function(x) sum(x == 0) / length(x))
+aggregate(train$population, list(train$status_group), mean)
+aggregate(train$population, list(train$status_group), var)
+
+### Average population is higher for functional cases
+
+t.test(train[status_group == 'functional']$population,
+       train[status_group == 'functional needs repair']$population,
+       alternative = "greater", var.equal = FALSE)
+t.test(train[status_group == 'functional']$population,
+       train[status_group == 'non functional']$population,
+       alternative = "greater", var.equal = FALSE)
+t.test(train[status_group == 'functional needs repair']$population,
+       train[status_group == 'non functional']$population,
+       alternative = "greater", var.equal = FALSE)
+
+### Interestingly, only the 2nd t-test has a really low p-value
+
+ggplot(data = train[population > 0],
+       aes(x = status_group, y = population)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  scale_y_log10() +
+  labs(x = NULL, y = NULL,
+       title = "Population by status group (Log scale)",
+       subtitle = "Excluding 0 values") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
+ggplot(data = train[population > 0],
+       aes(x = status_group, y = population)) +
+  stat_summary(fun.y = mean, colour = "darkred", geom = "point",
+               shape = 18, size = 5, show.legend = FALSE) +
+  labs(x = NULL, y = NULL,
+       title = "Population by status group (Mean)",
+       subtitle = "Excluding 0 values") +
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, vjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
+  )
