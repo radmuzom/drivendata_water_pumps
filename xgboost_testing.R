@@ -1,7 +1,7 @@
 library(xgboost)
 library(rBayesianOptimization)
 
-train <- train_values[, c(1, 2, 33:100)]
+train <- train_values[, c(2, 3, 4, 5, 11, 33:104)]
 set.seed(412)
 train[["Random"]] <- runif(nrow(train))
 
@@ -63,13 +63,13 @@ opt_res <- BayesianOptimization(
     eta = c(0.03, 0.3),
     gamma = c(0, 50),
     max_depth = c(2L, 8L),
-    min_child_weight = c(25L, 200L),
+    min_child_weight = c(1L, 200L),
     subsample = c(0.5, 0.9),
     nrounds = c(50L, 1000L)
   ),
   init_grid_dt = NULL,
   init_points = 20,
-  n_iter = 100,
+  n_iter = 40,
   acq = "ucb",
   kappa = 2.576,
   eps = 0.0,
@@ -86,13 +86,14 @@ param_list <- list(
   "objective" = "multi:softprob",
   "eval_metric" = "merror",
   "num_class" = 3,
+  "nrounds" = 1000,
   "eta" = 0.3,
   "gamma" = 0,
   "max_depth" = 8,
-  "min_child_weight" = 25,
+  "min_child_weight" = 1,
   "subsample" = 0.9
 )
-bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 300)
+bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 1000)
 train_test_pred <- predict(bst, newdata = train_test_mat)
 train_test_pred <- matrix(train_test_pred, nrow = 3,
                           ncol = length(train_test_pred) / 3)
