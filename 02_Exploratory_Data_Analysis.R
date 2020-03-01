@@ -526,3 +526,30 @@ regdist <- train[, .N, keyby = c("region", "district_code")]
 
 prop.table(table(train$district_code, train$status_group, useNA = "ifany"),
            margin = 1)
+
+# lga ---------------------------------------------------------------------
+
+# Number of unique lga
+length(unique(train$lga))
+
+### 125 unique values
+
+# Look at values
+table(train$lga)
+
+# Chi-squared test
+chisq.test(factor(train$lga), factor(train$status_group))
+chisq.test(factor(train$lga), factor(train$status_group),
+           simulate.p.value = TRUE, B = 100000)
+
+# Proportion by group
+prop.table(table(train$lga, train$status_group, useNA = "ifany"),
+           margin = 1)
+
+### From the above, the rates definitely vary by lga. To avoid 1-hot encoding
+### such a large number of values, perhaps better to encode it another way
+
+# ward --------------------------------------------------------------------
+
+# Number of unique ward
+length(unique(train$lga))
