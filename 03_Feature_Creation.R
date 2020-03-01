@@ -205,3 +205,25 @@ train_values <- cbind(train_values, train_dtz)
 test_values <- cbind(test_values, test_dtz)
 
 rm(dtz)
+
+# lga
+
+lga_summ <- prop.table(
+  table(train_values$lga, train_values$status_group, useNA = "ifany"),
+  margin = 1
+)
+lga_summ <- as.data.table(lga_summ)
+lga_summ <- dcast(lga_summ, V1 ~ V2, value.var = "N")
+names(lga_summ) <- c("lga", "lga_avg_functional",
+                     "lga_avg_functional_needs_repair",
+                     "lga_avg_non_functional")
+
+train_values <- merge(train_values, lga_summ, by = "lga",
+                      all.x = TRUE)
+test_values <- merge(test_values, lga_summ, by = "lga",
+                     all.x = TRUE)
+
+# population
+
+train_values[["population_0_flag"]] <- ifelse(train_values$population > 0, 0, 1)
+test_values[["population_0_flag"]] <- ifelse(test_values$population > 0, 0, 1)
