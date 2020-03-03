@@ -42,12 +42,13 @@ xgb_cv_bayes <- function(eta, gamma, max_depth,
   xgcv <- xgb.cv(
     params = param_list,
     data = train_train_mat,
-    nround = 1000,
+    nrounds = nrounds,
     folds = cv_folds,
     prediction = TRUE,
     showsd = TRUE,
     early_stopping_rounds = 10,
-    verbose = 0
+    verbose = 0,
+    callbacks = list(cb.cv.predict(save_models = TRUE))
   )
 
   validation_scores <- as.data.frame(xgcv$evaluation_log)
