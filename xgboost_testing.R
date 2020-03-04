@@ -54,7 +54,14 @@ xgb_cv_bayes <- function(eta, gamma, max_depth,
   validation_scores <- as.data.frame(xgcv$evaluation_log)
   train_error <- tail(validation_scores$train_merror_mean, 1)
   test_error <- tail(validation_scores$test_merror_mean, 1)
-  list(Score = -test_error,
+  
+  # Reduce overfitting
+  s <- -1 * abs(test_error - train_error) - 0.000001
+  
+  # Minimize test error
+  # s <- -test_error
+  
+  list(Score = -s,
        Pred = xgcv$pred)
 }
 
@@ -87,14 +94,14 @@ param_list <- list(
   "objective" = "multi:softprob",
   "eval_metric" = "merror",
   "num_class" = 3,
-  "nrounds" = 1000,
-  "eta" = 0.3,
-  "gamma" = 0,
+  "nrounds" = 77,
+  "eta" = 0.1854,
+  "gamma" = 14.9181,
   "max_depth" = 8,
-  "min_child_weight" = 1,
+  "min_child_weight" = 15,
   "subsample" = 0.9
 )
-bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 1000)
+bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 77)
 train_test_pred <- predict(bst, newdata = train_test_mat)
 train_test_pred <- matrix(train_test_pred, nrow = 3,
                           ncol = length(train_test_pred) / 3)
