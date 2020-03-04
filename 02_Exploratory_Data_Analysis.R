@@ -618,3 +618,13 @@ ggplot(data = train[population > 0],
     plot.title = element_text(hjust = 0.5, vjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5, vjust = 0.5)
   )
+
+# public_meeting ----------------------------------------------------------
+
+# Check proportion of functional by 0, 1, NA
+train[["public_meeting"]] <- train$public_meeting * 1
+prop.table(table(train$public_meeting, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+### Wherever public_meeting is 1 or NA, the proportion of functional pumps
+### are much higher
