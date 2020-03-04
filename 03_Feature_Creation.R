@@ -227,3 +227,8 @@ test_values <- merge(test_values, lga_summ, by = "lga",
 
 train_values[["population_0_flag"]] <- ifelse(train_values$population > 0, 0, 1)
 test_values[["population_0_flag"]] <- ifelse(test_values$population > 0, 0, 1)
+
+# public_meeting
+
+train_values[["public_meeting"]] <- train_values$public_meeting * 1
+test_values[["public_meeting"]] <- test_values$public_meeting * 1
