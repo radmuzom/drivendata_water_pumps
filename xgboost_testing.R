@@ -91,7 +91,7 @@ xgb_cv_bayes <- function(eta, gamma, max_depth, min_child_weight, subsample) {
        Pred = xgcv$pred)
 }
 
-actual_rounds <- vector(mode = "numeric", length = 20)
+actual_rounds <- vector(mode = "numeric", length = 100)
 opt_res <- BayesianOptimization(
   xgb_cv_bayes,
   bounds = list(
@@ -102,8 +102,8 @@ opt_res <- BayesianOptimization(
     subsample = c(0.5, 1.0)
   ),
   init_grid_dt = NULL,
-  init_points = 10,
-  n_iter = 10,
+  init_points = 50,
+  n_iter = 50,
   acq = "ucb",
   kappa = 2.576,
   eps = 0.0,
