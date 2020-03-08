@@ -20,7 +20,7 @@ train_train_mat <- xgb.DMatrix(data = as.matrix(train_train),
 train_test_mat <- xgb.DMatrix(data = as.matrix(train_test),
                               label = train_test_label)
 
-xgb_cv_bayes <- function(eta, gamma, max_depth, min_child_weight, subsample) {
+xgb_cv_bayes <- function(gamma, max_depth, min_child_weight, subsample) {
   
   # Randomly choose a validation set for unseen OOS error
   nr <- nrow(train_train)
@@ -47,17 +47,19 @@ xgb_cv_bayes <- function(eta, gamma, max_depth, min_child_weight, subsample) {
     "objective" = "multi:softprob",
     "eval_metric" = "merror",
     "num_class" = 3,
-    "eta" = eta,
+    "eta" = 0.1,
     "gamma" = gamma,
     "max_depth" = max_depth,
     "min_child_weight" = min_child_weight,
     "subsample" = subsample
   )
   
+  # Run XGBoost cross-validation
+  set.seed(750)
   xgcv <- xgb.cv(
     params = param_list,
     data = cv_xgb_mat,
-    nrounds = 500,
+    nrounds = 1000,
     nfold = 4,
     stratified = TRUE,
     prediction = TRUE,
@@ -67,14 +69,17 @@ xgb_cv_bayes <- function(eta, gamma, max_depth, min_child_weight, subsample) {
     callbacks = list(cb.cv.predict(save_models = TRUE))
   )
   
+  # Update the actual number of rounds used
   niter <- xgcv$niter
   last_round <- which(actual_rounds == 0)[1]
   actual_rounds[last_round] <<- niter
 
+  # Obtain train and test error from cross-validation
   validation_scores <- as.data.frame(xgcv$evaluation_log)
   train_error <- tail(validation_scores$train_merror_mean, 1)
   test_error <- tail(validation_scores$test_merror_mean, 1)
   
+  # Calculate the mean out of sample error
   oos_error <- vector(mode = "numeric", length = 4)
   for (i in 1:4) {
     m <- xgcv$models[[i]]
@@ -87,7 +92,18 @@ xgb_cv_bayes <- function(eta, gamma, max_depth, min_child_weight, subsample) {
   }
   mean_oos_error <- mean(oos_error)
   
-  list(Score = -mean_oos_error,
+  # Calculate the final validation error as the minimum of test and oos error
+  val_error <- min(test_error, mean_oos_error)
+  
+  # Penalize overfitting
+  diff_error <- abs(train_error - val_error)
+  if (diff_error < 0.02) {
+    score <- -train_error
+  } else {
+    score <- -val_error
+  }
+  
+  list(Score = score,
        Pred = xgcv$pred)
 }
 
@@ -95,15 +111,14 @@ actual_rounds <- vector(mode = "numeric", length = 100)
 opt_res <- BayesianOptimization(
   xgb_cv_bayes,
   bounds = list(
-    eta = c(0.03, 0.3),
     gamma = c(0, 50),
     max_depth = c(2L, 8L),
     min_child_weight = c(1L, 200L),
     subsample = c(0.5, 1.0)
   ),
   init_grid_dt = NULL,
-  init_points = 50,
-  n_iter = 50,
+  init_points = 30,
+  n_iter = 30,
   acq = "ucb",
   kappa = 2.576,
   eps = 0.0,
@@ -112,6 +127,8 @@ opt_res <- BayesianOptimization(
 
 # Modify the parameters below using the Bayesian search results
 
+set.seed(750)
+actual_rounds[39] # Modify for actual rounds used for best iteration
 param_list <- list(
   "booster" = "gbtree",
   "verbosity" = 3,
@@ -120,13 +137,13 @@ param_list <- list(
   "objective" = "multi:softprob",
   "eval_metric" = "merror",
   "num_class" = 3,
-  "eta" = 0.0879,
-  "gamma" = 0,
-  "max_depth" = 7,
+  "eta" = 0.1,
+  "gamma" = 1.0326,
+  "max_depth" = 8,
   "min_child_weight" = 1,
-  "subsample" = 0.7225
+  "subsample" = 0.8771
 )
-bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 219)
+bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 179)
 train_test_pred <- predict(bst, newdata = train_test_mat)
 train_test_pred <- matrix(train_test_pred, nrow = 3,
                           ncol = length(train_test_pred) / 3)
