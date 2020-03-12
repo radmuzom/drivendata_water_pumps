@@ -628,3 +628,13 @@ prop.table(table(train$public_meeting, train$status_group,
 
 ### Wherever public_meeting is 1 or NA, the proportion of functional pumps
 ### are much higher
+
+# scheme_management -------------------------------------------------------
+
+# Number of unique values
+length(unique(train$scheme_management))
+prop.table(table(train$scheme_management, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+### Clear some of the scheme managers have higher percentage of functional
+### pumps
