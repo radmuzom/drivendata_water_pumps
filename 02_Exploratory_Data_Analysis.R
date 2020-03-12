@@ -633,8 +633,18 @@ prop.table(table(train$public_meeting, train$status_group,
 
 # Number of unique values
 length(unique(train$scheme_management))
+
+### 13 unique values
+
 prop.table(table(train$scheme_management, train$status_group,
                  useNA = "ifany"), margin = 1)
 
 ### Clear some of the scheme managers have higher percentage of functional
 ### pumps
+
+
+# scheme_name -------------------------------------------------------------
+
+length(unique(train$scheme_name))
+
+### 2577 unique values
