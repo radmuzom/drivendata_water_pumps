@@ -232,3 +232,19 @@ test_values[["population_0_flag"]] <- ifelse(test_values$population > 0, 0, 1)
 
 train_values[["public_meeting"]] <- train_values$public_meeting * 1
 test_values[["public_meeting"]] <- test_values$public_meeting * 1
+
+# scheme_management -------------------------------------------------------
+
+train_values[is.na(scheme_management) | scheme_management == ""] <- "missing"
+test_values[is.na(scheme_management) | scheme_management == ""] <- "missing"
+
+dtz <- designTreatmentsZ(train_values, "scheme_management")
+train_dtz <- prepare(dtz, train_values)
+train_dtz <- train_dtz[, -1]
+test_dtz <- prepare(dtz, test_values)
+test_dtz <- test_dtz[, -1]
+
+train_values <- cbind(train_values, train_dtz)
+test_values <- cbind(test_values, test_dtz)
+
+rm(dtz)
