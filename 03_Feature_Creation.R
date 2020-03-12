@@ -250,3 +250,8 @@ train_values <- cbind(train_values, train_dtz)
 test_values <- cbind(test_values, test_dtz)
 
 rm(dtz)
+
+# permit
+
+train_values[["permit"]] <- train_values$permit * 1
+test_values[["permit"]] <- test_values$permit * 1

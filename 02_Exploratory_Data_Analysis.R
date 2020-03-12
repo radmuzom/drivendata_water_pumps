@@ -648,3 +648,10 @@ prop.table(table(train$scheme_management, train$status_group,
 length(unique(train$scheme_name))
 
 ### 2577 unique values
+
+# permit ------------------------------------------------------------------
+
+prop.table(table(train$permit, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+### Does not seem to have much relationship to status group
