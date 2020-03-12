@@ -655,3 +655,18 @@ prop.table(table(train$permit, train$status_group,
                  useNA = "ifany"), margin = 1)
 
 ### Does not seem to have much relationship to status group
+
+# construction_year -------------------------------------------------------
+
+length(unique(train$construction_year))
+
+### 55 unique values
+
+table(train$construction_year, useNA = "ifany")
+
+### Around 20K values with value 0
+
+prop.table(table(train$construction_year, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+### More recent constructions have higher percentage of functional pumps
