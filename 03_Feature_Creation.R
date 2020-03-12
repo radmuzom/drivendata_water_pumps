@@ -235,8 +235,10 @@ test_values[["public_meeting"]] <- test_values$public_meeting * 1
 
 # scheme_management -------------------------------------------------------
 
-train_values[is.na(scheme_management) | scheme_management == ""] <- "missing"
-test_values[is.na(scheme_management) | scheme_management == ""] <- "missing"
+train_values[is.na(scheme_management) | scheme_management == "",
+             "scheme_management"] <- "missing"
+test_values[is.na(scheme_management) | scheme_management == "",
+            "scheme_management"] <- "missing"
 
 dtz <- designTreatmentsZ(train_values, "scheme_management")
 train_dtz <- prepare(dtz, train_values)
