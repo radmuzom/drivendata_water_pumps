@@ -1,7 +1,7 @@
 library(xgboost)
 library(rBayesianOptimization)
 
-train <- train_values[, c(2, 3, 4, 5, 11, 12, 33:104)]
+train <- train_values[, c(2, 3, 4, 5, 11, 12, 33:117)]
 set.seed(412)
 train[["Random"]] <- runif(nrow(train))
 
@@ -20,7 +20,8 @@ train_train_mat <- xgb.DMatrix(data = as.matrix(train_train),
 train_test_mat <- xgb.DMatrix(data = as.matrix(train_test),
                               label = train_test_label)
 
-xgb_cv_bayes <- function(gamma, max_depth, min_child_weight, subsample) {
+xgb_cv_bayes <- function(gamma, max_depth, min_child_weight, subsample,
+                         colsample_bytree) {
   
   # Randomly choose a validation set for unseen OOS error
   nr <- nrow(train_train)
@@ -51,7 +52,8 @@ xgb_cv_bayes <- function(gamma, max_depth, min_child_weight, subsample) {
     "gamma" = gamma,
     "max_depth" = max_depth,
     "min_child_weight" = min_child_weight,
-    "subsample" = subsample
+    "subsample" = subsample,
+    "colsample_bytree" = colsample_bytree
   )
   
   # Run XGBoost cross-validation
@@ -114,7 +116,8 @@ opt_res <- BayesianOptimization(
     gamma = c(0, 50),
     max_depth = c(2L, 8L),
     min_child_weight = c(1L, 200L),
-    subsample = c(0.5, 1.0)
+    subsample = c(0.4, 1.0),
+    colsample_bytree = c(0.2, 1.0)
   ),
   init_grid_dt = NULL,
   init_points = 30,
