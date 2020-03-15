@@ -722,3 +722,26 @@ prop.table(table(train$extraction_type_final, train$status_group,
 chisq.test(factor(train$extraction_type_final), factor(train$status_group))
 chisq.test(factor(train$extraction_type_final), factor(train$status_group),
            simulate.p.value = TRUE, B = 100000)
+
+# management --------------------------------------------------------------
+
+length(unique(train$management))
+
+### 12 distinct values
+
+prop.table(table(train$management, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# management_group --------------------------------------------------------
+
+length(unique(train$management_group))
+
+### 5 distinct values
+
+prop.table(table(train$management_group, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+mgmt_summ <- train[, .N, keyby=c(
+  "management",
+  "management_group"
+)]
