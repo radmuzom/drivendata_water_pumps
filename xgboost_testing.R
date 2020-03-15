@@ -1,7 +1,7 @@
 library(xgboost)
 library(rBayesianOptimization)
 
-train <- train_values[, c(2, 3, 4, 5, 11, 12, 33:117)]
+train <- train_values[, c(5, 6, 7, 8, 14, 15, 18, 19, 33:139)]
 set.seed(412)
 train[["Random"]] <- runif(nrow(train))
 
@@ -114,14 +114,14 @@ opt_res <- BayesianOptimization(
   xgb_cv_bayes,
   bounds = list(
     gamma = c(0, 50),
-    max_depth = c(2L, 8L),
+    max_depth = c(2L, 20L),
     min_child_weight = c(1L, 200L),
     subsample = c(0.4, 1.0),
     colsample_bytree = c(0.2, 1.0)
   ),
   init_grid_dt = NULL,
-  init_points = 30,
-  n_iter = 30,
+  init_points = 40,
+  n_iter = 40,
   acq = "ucb",
   kappa = 2.576,
   eps = 0.0,
@@ -131,7 +131,7 @@ opt_res <- BayesianOptimization(
 # Modify the parameters below using the Bayesian search results
 
 set.seed(750)
-actual_rounds[39] # Modify for actual rounds used for best iteration
+actual_rounds[44] # Modify for actual rounds used for best iteration
 param_list <- list(
   "booster" = "gbtree",
   "verbosity" = 3,
@@ -141,12 +141,13 @@ param_list <- list(
   "eval_metric" = "merror",
   "num_class" = 3,
   "eta" = 0.1,
-  "gamma" = 1.0326,
-  "max_depth" = 8,
+  "gamma" = 0,
+  "max_depth" = 12,
   "min_child_weight" = 1,
-  "subsample" = 0.8771
+  "subsample" = 1,
+  "colsample_bytree" = 0.3367
 )
-bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 179)
+bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 69)
 train_test_pred <- predict(bst, newdata = train_test_mat)
 train_test_pred <- matrix(train_test_pred, nrow = 3,
                           ncol = length(train_test_pred) / 3)
