@@ -670,3 +670,55 @@ prop.table(table(train$construction_year, train$status_group,
                  useNA = "ifany"), margin = 1)
 
 ### More recent constructions have higher percentage of functional pumps
+
+# extraction_type ---------------------------------------------------------
+
+length(unique(train$extraction_type))
+
+### 18 distinct values
+
+prop.table(table(train$extraction_type, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# extraction_type_group ---------------------------------------------------
+
+length(unique(train$extraction_type_group))
+
+### 13 distinct values
+
+prop.table(table(train$extraction_type_group, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# extraction_type_class ---------------------------------------------------
+
+length(unique(train$extraction_type_class))
+
+### 7 distinct values
+
+prop.table(table(train$extraction_type_class, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+ext_type_summ <- train[, .N, keyby=c(
+  "extraction_type",
+  "extraction_type_group",
+  "extraction_type_class"
+)]
+
+fwrite(ext_type_summ, "02_Exploratory_Outputs/ext_type_summ.csv")
+
+ext_imputed <- fread("02_Exploratory_Outputs/ext_type_imputed.csv")
+ext_imputed <- ext_imputed[, -c("N")]
+
+train <- merge(train, ext_imputed, by=c(
+  "extraction_type",
+  "extraction_type_group",
+  "extraction_type_class"
+), all.x = TRUE)
+
+prop.table(table(train$extraction_type_final, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# Chi-squared test
+chisq.test(factor(train$extraction_type_final), factor(train$status_group))
+chisq.test(factor(train$extraction_type_final), factor(train$status_group),
+           simulate.p.value = TRUE, B = 100000)

@@ -1,0 +1,19 @@
+extraction_type,extraction_type_group,extraction_type_class,N,extraction_type_final
+gravity,gravity,gravity,26780,E1
+nira/tanira,nira/tanira,handpump,8154,E2
+other,other,other,6430,E3
+submersible,submersible,submersible,4764,E4
+swn 80,swn 80,handpump,3670,E5
+mono,mono,motorpump,2865,E6
+india mark ii,india mark ii,handpump,2400,E7
+afridev,afridev,handpump,1770,E8
+ksb,submersible,submersible,1415,E9
+other - rope pump,rope pump,rope pump,451,E10
+other - swn 81,other handpump,handpump,229,E10
+windmill,wind-powered,wind-powered,117,E10
+india mark iii,india mark iii,handpump,98,E10
+cemo,other motorpump,motorpump,90,E10
+other - play pump,other handpump,handpump,85,E10
+walimi,other handpump,handpump,48,E10
+climax,other motorpump,motorpump,32,E10
+other - mkulima/shinyanga,other handpump,handpump,2,E10
