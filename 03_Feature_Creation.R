@@ -255,3 +255,47 @@ rm(dtz)
 
 train_values[["permit"]] <- train_values$permit * 1
 test_values[["permit"]] <- test_values$permit * 1
+
+# extraction_type, extraction_type_group, extraction_type_class
+
+ext_imputed <- fread("02_Exploratory_Outputs/ext_type_imputed.csv")
+ext_imputed <- ext_imputed[, -c("N")]
+
+train_values <- merge(train_values, ext_imputed, by=c(
+  "extraction_type",
+  "extraction_type_group",
+  "extraction_type_class"
+), all.x = TRUE)
+
+test_values <- merge(test_values, ext_imputed, by=c(
+  "extraction_type",
+  "extraction_type_group",
+  "extraction_type_class"
+), all.x = TRUE)
+
+dtz <- designTreatmentsZ(train_values, "extraction_type_final")
+train_dtz <- prepare(dtz, train_values)
+train_dtz <- train_dtz[, -1]
+test_dtz <- prepare(dtz, test_values)
+test_dtz <- test_dtz[, -1]
+
+train_values <- cbind(train_values, train_dtz)
+test_values <- cbind(test_values, test_dtz)
+
+rm(dtz)
+
+train_values <- train_values[, -c("extraction_type_final")]
+test_values <- test_values[, -c("extraction_type_final")]
+
+# management
+
+dtz <- designTreatmentsZ(train_values, "management")
+train_dtz <- prepare(dtz, train_values)
+train_dtz <- train_dtz[, -1]
+test_dtz <- prepare(dtz, test_values)
+test_dtz <- test_dtz[, -1]
+
+train_values <- cbind(train_values, train_dtz)
+test_values <- cbind(test_values, test_dtz)
+
+rm(dtz)
