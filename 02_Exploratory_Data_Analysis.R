@@ -791,3 +791,26 @@ qlty_summ <- train[, .N, keyby=c(
   "water_quality",
   "quality_group"
 )]
+
+# quantity ----------------------------------------------------------------
+
+length(unique(train$quantity))
+
+### 5 distinct values
+
+prop.table(table(train$quantity, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# quantity_group ----------------------------------------------------------
+
+length(unique(train$quantity_group))
+
+### 5 distinct values
+
+prop.table(table(train$quantity_group, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+qnty_summ <- train[, .N, keyby=c(
+  "quantity",
+  "quantity_group"
+)]
