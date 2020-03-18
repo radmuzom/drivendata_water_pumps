@@ -351,3 +351,16 @@ train_values <- cbind(train_values, train_dtz)
 test_values <- cbind(test_values, test_dtz)
 
 rm(dtz)
+
+# waterpoint_type
+
+dtz <- designTreatmentsZ(train_values, "waterpoint_type")
+train_dtz <- prepare(dtz, train_values)
+train_dtz <- train_dtz[, -1]
+test_dtz <- prepare(dtz, test_values)
+test_dtz <- test_dtz[, -1]
+
+train_values <- cbind(train_values, train_dtz)
+test_values <- cbind(test_values, test_dtz)
+
+rm(dtz)

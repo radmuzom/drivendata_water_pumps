@@ -852,3 +852,23 @@ src_summ <- train[, .N, keyby=c(
   "source_type",
   "source_class"
 )]
+
+# watepoint_type ----------------------------------------------------------
+
+length(unique(train$waterpoint_type))
+
+### 7 distinct values
+
+prop.table(table(train$waterpoint_type, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# waterpoint_type_group ---------------------------------------------------
+
+length(unique(train$waterpoint_type_group))
+
+### 6 distinct values
+
+wtp_summ <- train[, .N, keyby=c(
+  "waterpoint_type",
+  "waterpoint_type_group"
+)]
