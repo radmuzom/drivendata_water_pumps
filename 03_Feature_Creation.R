@@ -10,7 +10,7 @@ train_values <- merge(train_values, train_labels, by = "id")
 test_values <- fread("test_values.csv")
 
 # Remove columns which cannot be used as features
-dropcols <- c("date_recorded", "wpt_name", "num_private", "recorded_by", "id",
+dropcols <- c("date_recorded", "wpt_name", "num_private", "recorded_by",
               "region_code")
 train_values <- train_values[, -..dropcols]
 test_values <- test_values[, -..dropcols]

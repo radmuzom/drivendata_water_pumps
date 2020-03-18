@@ -1,7 +1,7 @@
 library(xgboost)
 library(rBayesianOptimization)
 
-train <- train_values[, c(5, 6, 7, 8, 14, 15, 18, 19, 33:139)]
+train <- train_values[, c(6, 7, 8, 9, 15, 16, 19, 20, 34:177)]
 set.seed(412)
 train[["Random"]] <- runif(nrow(train))
 
@@ -131,7 +131,7 @@ opt_res <- BayesianOptimization(
 # Modify the parameters below using the Bayesian search results
 
 set.seed(750)
-actual_rounds[44] # Modify for actual rounds used for best iteration
+actual_rounds[57] # Modify for actual rounds used for best iteration
 param_list <- list(
   "booster" = "gbtree",
   "verbosity" = 3,
@@ -142,12 +142,12 @@ param_list <- list(
   "num_class" = 3,
   "eta" = 0.1,
   "gamma" = 0,
-  "max_depth" = 12,
-  "min_child_weight" = 1,
+  "max_depth" = 20,
+  "min_child_weight" = 4,
   "subsample" = 1,
-  "colsample_bytree" = 0.3367
+  "colsample_bytree" = 0.2
 )
-bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 69)
+bst <- xgb.train(params = param_list, data = train_train_mat, nrounds = 107)
 train_test_pred <- predict(bst, newdata = train_test_mat)
 train_test_pred <- matrix(train_test_pred, nrow = 3,
                           ncol = length(train_test_pred) / 3)
@@ -171,3 +171,23 @@ caret::confusionMatrix(factor(train_train_pred$max_prob),
                        mode = "everything")
 
 xgb.ggplot.importance(xgb.importance(model = bst))
+
+final_test_pred <- predict(bst, as.matrix(
+  test_values[, c(6, 7, 8, 9, 15, 16, 19, 20, 34:176)]
+))
+final_test_pred <- matrix(final_test_pred, nrow = 3,
+                           ncol = length(final_test_pred) / 3)
+final_test_pred <- data.frame(t(final_test_pred))
+final_test_pred[["max_prob"]] <- max.col(final_test_pred, "last")
+final_test_pred[["id"]] <- test_values$id
+final_test_pred[["status_group"]] <- "functional"
+final_test_pred[final_test_pred$max_prob == 2, "status_group"] <-
+  "functional needs repair"
+final_test_pred[final_test_pred$max_prob == 3, "status_group"] <-
+  "non functional"
+
+sf <- fread("SubmissionFormat.csv")
+sf[["status_group"]] <- NULL
+sf <- merge(sf, final_test_pred[, c("id", "status_group")],
+            by = "id", sort = FALSE)
+fwrite(sf, "Submission_20200319.csv")
