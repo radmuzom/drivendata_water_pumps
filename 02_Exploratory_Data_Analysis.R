@@ -814,3 +814,41 @@ qnty_summ <- train[, .N, keyby=c(
   "quantity",
   "quantity_group"
 )]
+
+# source ------------------------------------------------------------------
+
+length(unique(train$source))
+
+### 10 distinct values
+
+prop.table(table(train$source, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# source_type -------------------------------------------------------------
+
+length(unique(train$source_type))
+
+### 7 distinct values
+
+prop.table(table(train$source_type, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+src_summ <- train[, .N, keyby=c(
+  "source",
+  "source_type"
+)]
+
+# source_class ------------------------------------------------------------
+
+length(unique(train$source_class))
+
+### 3 distinct values
+
+prop.table(table(train$source_class, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+src_summ <- train[, .N, keyby=c(
+  "source",
+  "source_type",
+  "source_class"
+)]
