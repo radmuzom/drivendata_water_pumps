@@ -768,3 +768,26 @@ pymt_summ <- train[, .N, keyby=c(
   "payment",
   "payment_type"
 )]
+
+# water_quality -----------------------------------------------------------
+
+length(unique(train$water_quality))
+
+### 8 distinct values
+
+prop.table(table(train$water_quality, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# quality_group -----------------------------------------------------------
+
+length(unique(train$quality_group))
+
+### 6 distinct values
+
+prop.table(table(train$quality_group, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+qlty_summ <- train[, .N, keyby=c(
+  "water_quality",
+  "quality_group"
+)]
