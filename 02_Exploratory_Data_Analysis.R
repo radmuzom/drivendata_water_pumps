@@ -745,3 +745,26 @@ mgmt_summ <- train[, .N, keyby=c(
   "management",
   "management_group"
 )]
+
+# payment -----------------------------------------------------------------
+
+length(unique(train$payment))
+
+### 7 distinct values
+
+prop.table(table(train$payment, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+# payment_type ------------------------------------------------------------
+
+length(unique(train$payment_type))
+
+### 7 distinct values
+
+prop.table(table(train$payment_type, train$status_group,
+                 useNA = "ifany"), margin = 1)
+
+pymt_summ <- train[, .N, keyby=c(
+  "payment",
+  "payment_type"
+)]
