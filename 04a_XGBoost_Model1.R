@@ -159,6 +159,8 @@ caret::confusionMatrix(factor(train_test_pred$max_prob),
                        factor(train_test_pred$label),
                        mode = "everything")
 
+# Test Accuracy - 0.8132
+
 train_train_pred <- predict(bst, newdata = train_train_mat)
 train_train_pred <- matrix(train_train_pred, nrow = 3,
                            ncol = length(train_train_pred) / 3)
@@ -169,6 +171,8 @@ train_train_pred[["label"]] <- train_train_label + 1
 caret::confusionMatrix(factor(train_train_pred$max_prob),
                        factor(train_train_pred$label),
                        mode = "everything")
+
+# Train Accuracy - 0.9593
 
 xgb.ggplot.importance(xgb.importance(model = bst))
 
